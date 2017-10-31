@@ -1,0 +1,16 @@
+{
+  "name": "LIRI-BOT",
+  "version": "1.0.0",
+  "description": "",
+  "main": "liri.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Steven McCreery",
+  "license": "MIT",
+  "dependencies": {
+    "require": "^2.83.0",
+    "node-spotify-api": "^1.0.7",
+    "twitter": "^1.7.1"
+  }
+}

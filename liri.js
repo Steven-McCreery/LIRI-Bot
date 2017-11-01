@@ -1,3 +1,5 @@
+var keys = require("./keys.js")
+console.log(keys);
 
 var arg = process.argv;
 

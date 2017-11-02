@@ -1,18 +1,21 @@
 var keys = require("./keys.js")
 console.log(keys);
 
+var request = require('request');
+
 var arg = process.argv;
 
 var fs = require("fs");
 
 var Twitter = require('twitter');
 
-var params = {screen_name: 'nodejs'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-	if (!error) {
-		console.log(tweets);
-}
-});
+// var params = {screen_name: 'nodejs'};
+
+// client.get('statuses/user_timeline', params, function(error, tweets, response) {
+// 	if (!error) {
+// 		console.log(tweets);
+// 	}
+// });
 
 // var Spotify = require('node-spotify-api');
 
@@ -28,23 +31,13 @@ client.get('statuses/user_timeline', params, function(error, tweets, response) {
 // 	console.log(data); 
 // });
 
-var request = require('request');
-request('http://www.google.com', function (error, response, body) {
-	console.log('error:', error); // Print the error if one occurred
-	console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-	console.log('body:', body); // Print the HTML for the Google homepage.
-});
 
+// request('http://www.google.com', function (error, response, body) {
+// 	console.log('error:', error); // Print the error if one occurred
+// 	console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+// 	console.log('body:', body); // Print the HTML for the Google homepage.
+// });
 
-if (arg[2] = "my-tweets") {
-	tweets();
-} else if (arg[2] = "spotify-this-song") {
-	music(arg[3]);
-} else if (arg[2] = "movie-this") {
-	movie(arg[3]);
-} else if (arg[2] = "do-what-it-says") {
-	says(arg[3]);
-}
 
 var tweets = function() {
 	console.log("============================================");
@@ -72,7 +65,7 @@ var movie = function() {
 				console.log("The movie's plot is: " + JSON.parse(body).Plot);
 				console.log("The movie's actors are: " + JSON.parse(body).Actors);
 			}
-		})
+		});
 	} else {
 		console.log("============================================");
 		console.log("Please see below for your movie's results!")
@@ -88,7 +81,7 @@ var movie = function() {
 				console.log("The movie's plot is: " + JSON.parse(body).Plot);
 				console.log("The movie's actors are: " + JSON.parse(body).Actors);
 			}
-		})
+		});
 }
 
 var says = function() {
@@ -96,6 +89,14 @@ var says = function() {
 	return;
 }
 
-
+if (arg[2] = "my-tweets") {
+	tweets();
+} else if (arg[2] = "spotify-this-song") {
+	music();
+} else if (arg[2] = "movie-this") {
+	movie();
+} else if (arg[2] = "do-what-it-says") {
+	says();
+}
 
 

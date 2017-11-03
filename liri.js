@@ -1,5 +1,6 @@
+
 var keys = require("./keys.js")
-console.log(keys);
+// console.log(keys);
 
 var request = require('request');
 
@@ -8,14 +9,20 @@ var arg = process.argv;
 var fs = require("fs");
 
 var Twitter = require('twitter');
-
-var params = {screen_name: '@RobertL80500116', count: '20'};
-
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-	if (!error) {
-		console.log(tweets);
-	}
+var client = new Twitter({
+	consumer_key: keys.consumer_key,
+	consumer_secret: keys.consumer_secret,
+	access_token_key: keys.access_token_key,
+	access_token_secret: keys.access_token_secret,
 });
+
+var params = {screen_name: 'RobertL80500116', count: 1};
+
+// client.get('statuses/user_timeline', params, function(error, tweets, response) {
+// 	if (!error) {
+// 		console.log(tweets);
+// 	}
+// });
 
 // var Spotify = require('node-spotify-api');
 
@@ -97,6 +104,16 @@ var liri = {
 	tweets() {
 		console.log("============================================");
 		console.log("Below are the last 20 Tweets on this account");
+		client.get('statuses/user_timeline', params, function(error, tweets, response) {
+			if (!error) {
+				for (var i = 0; tweets.length; i++) {
+					console.log(tweets[i].text);
+				}
+				// console.log(tweets.text);
+			} else {
+				console.log(error);
+			}
+		});
 	},
 
 	music() {
@@ -110,7 +127,7 @@ var liri = {
 
 };
 
-console.log(liri);
+// console.log(liri);
 
 var runtime = (function() {
 	if (arg[2] === "my-tweets") {

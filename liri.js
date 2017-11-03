@@ -109,21 +109,28 @@ var liri = {
 		console.log("music function");
 		console.log("==============");
 		var song = arg[3];
-		console.log("song: " + song);
+		// console.log("song: " + song);
 		if (!song) {
 			// "The Sign" by Ace of Base (default song)
 			spotify.search({ type: 'track', query: 'The Sign' }, function(err, data) {
 				if (err) {
 					return console.log('Error occurred: ' + err);
 				}
-				console.log(data); 
+				console.log("This song is from the artist(s): " + data.tracks.items[8].artists[0].name);
+				console.log("This song's name is: " + data.tracks.items[8].name);
+				console.log("Preview url for this track: " + data.tracks.items[8].preview_url);
+				console.log("This song is from the album: " + data.tracks.items[8].album.name);
 			});
 		} else {
+			// user's song choice, or from random.txt
 			spotify.search({ type: 'track', query: song }, function(err, data) {
 				if (err) {
 					return console.log('Error occurred: ' + err);
 				}
-				console.log(data); 
+				console.log("This song is from the artist(s): " + data.tracks.items[0].artists[0].name);
+				console.log("This song's name is: " + data.tracks.items[0].name);
+				console.log("Preview url for this track: " + data.tracks.items[0].preview_url);
+				console.log("This song is from the album: " + data.tracks.items[0].album.name);
 			});
 		}
 	},
@@ -142,5 +149,6 @@ var liri = {
 	},
 	
 };
+
 // calling function to direct user's query
 liri.runtime();

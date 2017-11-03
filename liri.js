@@ -1,13 +1,17 @@
 
+// importing twitter keys
 var keys = require("./keys.js")
-// console.log(keys);
 
+// importing request functionality for making ombd call leter in liri object
 var request = require('request');
 
+// condensing the arguments syntax
 var arg = process.argv;
 
+// importing the file reading/writing functionality
 var fs = require("fs");
 
+// defining items for twitter functionality
 var Twitter = require('twitter');
 var client = new Twitter({
 	consumer_key: keys.consumer_key,
@@ -15,62 +19,44 @@ var client = new Twitter({
 	access_token_key: keys.access_token_key,
 	access_token_secret: keys.access_token_secret,
 });
+var params = {screen_name: 'RobertL80500116'};
 
-var params = {screen_name: 'RobertL80500116', count: 1};
+// defining items for spotify functionality 
+var Spotify = require('node-spotify-api');
+var spotify = new Spotify({
+	id: "1d62845b5a6448c9a6df8534bd206ef3",
+	secret: "3b62efcca9084a4bb024265250a26971"
+});
 
-// client.get('statuses/user_timeline', params, function(error, tweets, response) {
-// 	if (!error) {
-// 		console.log(tweets);
-// 	}
-// });
-
-// var Spotify = require('node-spotify-api');
-
-// var spotify = new Spotify({
-// 	id: <your spotify client id>,
-// 	secret: <your spotify client secret>
-// });
-
-// spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-// 	if (err) {
-// 		return console.log('Error occurred: ' + err);
-// 	}
-// 	console.log(data); 
-// });
-
-
-// request('http://www.google.com', function (error, response, body) {
-// 	console.log('error:', error); // Print the error if one occurred
-// 	console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-// 	console.log('body:', body); // Print the HTML for the Google homepage.
-// });
-
-
+// this is the central functionality (LIRI)
 var liri = {
 
+	// this will take data from a text file and then calls the functionality (spotify in this case) as defined in the file
 	says() {
-		console.log("============================================");
+		console.log("=============");
 		console.log("says function");
+		console.log("=============");
 		fs.readFile("random.txt", "utf-8", function(error, data) {
 			if (error) {
 				return console.log(error);
 			}
-			console.log(data);
+			console.log("Reading stored file and redirecting to the music function");
 			var command = data.split(",");
-			console.log(command);
 			arg[2] = command[0];
 			arg[3] = command[1];
-			liri.music();
+			liri.runtime();
 		})
 	},
 
+	// ombd functionality
 	movie() {
 		if (!arg[3]) {
-			console.log("============================================");
+		// default movie, if no input from user
+			console.log("===============================================================================================");
 			console.log("Since you did not enter a movie title, please see the results below for the movie \"Mr. Nobody\"!");
+			console.log("===============================================================================================");
 			request("http://www.omdbapi.com/?t=mr+nobody+&y=&plot=short&apikey=40e9cece", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
-					console.log();
 					console.log("The movie's title is: " + JSON.parse(body).Title);
 					console.log("This movie was released in the year: " + JSON.parse(body).Year);
 					console.log("The movie's IMDB rating is: " + JSON.parse(body).imdbRating);
@@ -82,11 +68,12 @@ var liri = {
 				}
 			});
 		} else {
-			console.log("============================================");
+		// takes user's input and returns results
+			console.log("==========================================");
 			console.log("Please see below for your movie's results!")
+			console.log("==========================================");
 			request("http://www.omdbapi.com/?t=" + arg[3] + "&y=&plot=short&apikey=40e9cece", function(error, response, body) {
 				if (!error && response.statusCode === 200) {
-					console.log();
 					console.log("The movie's title is: " + JSON.parse(body).Title);
 					console.log("This movie was released in the year: " + JSON.parse(body).Year);
 					console.log("The movie's IMDB rating is: " + JSON.parse(body).imdbRating);
@@ -100,44 +87,60 @@ var liri = {
 		}
 	},
 
-
+	// twitter functionality
 	tweets() {
 		console.log("============================================");
 		console.log("Below are the last 20 Tweets on this account");
+		console.log("============================================");
 		client.get('statuses/user_timeline', params, function(error, tweets, response) {
 			if (!error) {
-				for (var i = 0; tweets.length; i++) {
+				for (var i = 0; i < tweets.length; i++) {
 					console.log(tweets[i].text);
 				}
-				// console.log(tweets.text);
 			} else {
 				console.log(error);
 			}
 		});
 	},
 
+	// spotify functionality
 	music() {
-		console.log("============================================");
+		console.log("==============");
 		console.log("music function");
+		console.log("==============");
 		var song = arg[3];
-		console.log(arg[3]);
+		console.log("song: " + song);
+		if (!song) {
+			// "The Sign" by Ace of Base (default song)
+			spotify.search({ type: 'track', query: 'The Sign' }, function(err, data) {
+				if (err) {
+					return console.log('Error occurred: ' + err);
+				}
+				console.log(data); 
+			});
+		} else {
+			spotify.search({ type: 'track', query: song }, function(err, data) {
+				if (err) {
+					return console.log('Error occurred: ' + err);
+				}
+				console.log(data); 
+			});
+		}
 	},
 
-
-
+	// function that runs initially and directs the user to different funcitions based on input
+	runtime() {
+		if (arg[2] === "my-tweets") {
+			liri.tweets();
+		} else if (arg[2] === "spotify-this-song") {
+			liri.music();
+		} else if (arg[2] === "movie-this") {
+			liri.movie();
+		} else if (arg[2] === "do-what-it-says") {
+			liri.says();
+		}
+	},
+	
 };
-
-// console.log(liri);
-
-var runtime = (function() {
-	if (arg[2] === "my-tweets") {
-		liri.tweets();
-	} else if (arg[2] === "spotify-this-song") {
-		liri.music();
-	} else if (arg[2] === "movie-this") {
-		liri.movie();
-	} else if (arg[2] === "do-what-it-says") {
-		liri.says();
-	}
-})();
-
+// calling function to direct user's query
+liri.runtime();
